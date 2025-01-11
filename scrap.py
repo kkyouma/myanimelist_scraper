@@ -1,20 +1,12 @@
-from pathlib import Path
+from src.scraper import MediaScraper, MediaType
 
-from bs4 import BeautifulSoup
-
-cwd_path = Path().cwd() / "data" / "raw"
-file_path = cwd_path / "index.html"
-
-with file_path.open("r") as f:
-    raw_html = f.read()
-
-soup = BeautifulSoup(raw_html, "html.parser")
+# Initialize scraper without storage
+scraper = MediaScraper(None, MediaType.ANIME)
 
 
-def main(html: BeautifulSoup = soup) -> None:
-    for item in html.find_all("a", class_="hoverinfo_trigger"):
-        print(item)
+# With progress callback
+def progress(current, total):
+    print(f"Progress: {current}/{total} ({current/total*100:.1f}%)")
 
 
-if __name__ == "__main__":
-    main()
+results = scraper.scrape_range(1, 5, save_html=False, progress_callback=progress)
