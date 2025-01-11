@@ -14,4 +14,4 @@ dev = [
 
 [tool.ruff]
 select = ["ALL"]
-ignore = ["D100", "D103", "D107", "T201"]
+ignore = ["D100", "D103", "D107", "T201", "ERA001"]
