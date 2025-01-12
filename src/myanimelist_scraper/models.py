@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import date
 from urllib.parse import urljoin
 
-from bs4.element import BeautifulSoup
+from bs4 import BeautifulSoup
 
 
 @dataclass
@@ -29,7 +29,7 @@ class Media:
         return urljoin(self.url, "stats")
 
     @classmethod
-    def from_soup_tag(cls, link_tag: BeautifulSoup) -> Media:
+    def from_soup_tag(cls, link_tag: BeautifulSoup):
         """Create a Manga instance from a BeautifulSoup tag."""
         return cls(
             name=link_tag.text.strip(),
@@ -55,7 +55,7 @@ class Anime(Media):
     episodes: int | str
     aired: dict[str, date]
     premiered: date  # NOTE: change type if datetime dont support "fall 2023" format
-    brodcast: date # %A at %H:%M (%Z)
+    brodcast: date  # %A at %H:%M (%Z)
     producers: list[str]
     licensors: str | list[str]
     studios: str | list[str]
