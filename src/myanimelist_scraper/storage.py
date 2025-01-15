@@ -1,5 +1,8 @@
 from pathlib import Path
 
+import pandas as pd
+from pandas import DataFrame
+
 
 class Storage:
     """Handle all file operations for the scraper."""
@@ -7,11 +10,13 @@ class Storage:
     def __init__(self, base_path: str | Path) -> None:
         self.base_path = Path(base_path)
         self.raw_path = self.base_path / "data" / "raw"
+        self.scraped_path = self.base_path / "data" / "scraped"
         self._ensure_directories()
 
     def _ensure_directories(self) -> None:
         """Create necesary directories if they dont exist."""
         self.raw_path.mkdir(parents=True, exist_ok=True)
+        self.scraped_path.mkdir(parents=True, exist_ok=True)
 
     def save_html(self, content: str, filename: str) -> Path:
         """Save raw HTML content to file."""
@@ -20,3 +25,39 @@ class Storage:
             f.write(content)
 
         return file_path
+
+    def save_csv(self, content: dict | DataFrame, filename: str) -> Path:
+        """Save data extracted from the scrap."""
+        file_path = self.scraped_path / filename
+
+        try:
+            if isinstance(content, DataFrame):
+                content.to_csv(file_path, index=False, encoding="utf-8")
+
+            elif isinstance(content, dict):
+                df = pd.DataFrame([content])
+                df.to_csv(file_path, index=False, encoding="utf-8")
+
+        except (ValueError, OSError) as e:
+            msg = f"Failed to save CSV to {file_path}: {e}"
+            raise OSError(msg) from e
+
+        return file_path
+
+    def save_json(self, content: dict, filename: str) -> Path:
+        """Save data as a JSON file."""
+        file_path = self.scraped_path / self._sanitize_filename(filename)
+        try:
+            with file_path.open("w", encoding="utf-8") as f:
+                json.dump(content, f, indent=4)
+        except OSError as e:
+            msg = f"Failed to save JSON to {file_path}: {e}"
+            raise OSError(msg)  e
+        return file_path
+
+    @staticmethod
+    def _sanitize_filename(filename: str) -> str:
+        """Sanitize filename to remove unsafe characters."""
+        return "".join(
+            c for c in filename if c.isalnum() or c in ("-", "_", ".")
+        ).strip()
