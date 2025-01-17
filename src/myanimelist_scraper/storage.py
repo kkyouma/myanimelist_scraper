@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -44,6 +45,14 @@ class Storage:
 
         return file_path
 
+    def read_html(self, filename: str) -> str:
+        """Read raw HTML content from a file."""
+        file_path = self.raw_path / filename
+        if not file_path.exists():
+            raise FileNotFoundError(file_path)
+        with file_path.open("r", encoding="utf-8") as f:
+            return f.read()
+
     def save_json(self, content: dict, filename: str) -> Path:
         """Save data as a JSON file."""
         file_path = self.scraped_path / self._sanitize_filename(filename)
@@ -52,7 +61,7 @@ class Storage:
                 json.dump(content, f, indent=4)
         except OSError as e:
             msg = f"Failed to save JSON to {file_path}: {e}"
-            raise OSError(msg)  e
+            raise OSError(msg) from e
         return file_path
 
     @staticmethod
