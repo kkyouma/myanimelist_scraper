@@ -70,17 +70,28 @@ class MediaScraper:
 
         for div in soup.select("div[class*='spaceit_pad']"):
             label = div.find("span", class_="dark_text")
-
             if label:
                 key = label.text.strip().rstrip(":").lower()
-                links = div.find_all("a")
-                # Get the text after the label and clean it
-                if len(links) > 1:
-                    value = [link.text.strip() for link in links]
-                elif len(links) == 1:
-                    value = links[0].text.strip()
-                else:
+
+                if key == "score":
+                    score_span = div.find("span", class_="score-label")
+                    if score_span:
+                        value = score_span.text.strip()
+                    else:
+                        continue
+                elif key in {"ranked", "popularity"}:
                     value = label.next_sibling.strip()
+                    continue
+                else:
+                    links = div.find_all("a")
+                    # Get the text after the label and clean it
+                    if len(links) > 1:
+                        value = [link.text.strip() for link in links]
+                    elif len(links) == 1:
+                        value = links[0].text.strip()
+                    else:
+                        value = label.next_sibling.strip()
+
                 stats[key] = value
 
         return stats

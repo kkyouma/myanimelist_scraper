@@ -27,7 +27,7 @@ class Storage:
 
         return file_path
 
-    def save_csv(self, content: dict | DataFrame, filename: str) -> Path:
+    def save_csv(self, content: list[dict] | DataFrame, filename: str) -> Path:
         """Save data extracted from the scrap."""
         file_path = self.scraped_path / filename
 
