@@ -5,6 +5,8 @@ build/
 dist/
 wheels/
 *.egg-info
+data/raw**
+data/scraped**
 
 uv.lock
 *.env
