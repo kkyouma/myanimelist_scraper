@@ -2,7 +2,6 @@ import json
 from pathlib import Path
 
 import pandas as pd
-from pandas import DataFrame
 
 
 class Storage:
@@ -27,17 +26,27 @@ class Storage:
 
         return file_path
 
-    def save_csv(self, content: list[dict] | DataFrame, filename: str) -> Path:
+    def save_csv(self, content: list[dict], filename: str) -> Path:
         """Save data extracted from the scrap."""
         file_path = self.scraped_path / filename
 
         try:
-            if isinstance(content, DataFrame):
-                content.to_csv(file_path, index=False, encoding="utf-8")
+            df = pd.DataFrame(content)
 
-            elif isinstance(content, dict):
-                df = pd.DataFrame([content])
-                df.to_csv(file_path, index=False, encoding="utf-8")
+            mode = "w"
+            header = True
+
+            if file_path.exists():
+                mode = "a"
+                header = False
+
+            df.to_csv(
+                file_path,
+                index=False,
+                encoding="utf-8",
+                mode=mode,
+                header=header,
+            )
 
         except (ValueError, OSError) as e:
             msg = f"Failed to save CSV to {file_path}: {e}"
