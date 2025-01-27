@@ -1,17 +1,42 @@
+from models import Media
 from rich.console import Console
 from rich.panel import Panel
 from scraper import MediaScraper
 from storage import Storage
 from utils import name_formatter
 
+console = Console()
+# Initialize storage and scraper
+base_url = "https://myanimelist.net/topanime.php"
+storage = Storage("../../")
+scraper = MediaScraper(storage=storage, url=base_url)
+
+
+def scrap_indexs(n_pages_to_scrap: int = 1) -> None:
+    for n_page in range(n_pages_to_scrap):
+        current_url = f"{base_url}?limit={n_page * 50}"
+        raw_html = scraper.fetch_page(current_url)
+
+        items_list = scraper.extract_items_list(raw=raw_html)
+
+        media_items: list[Media] = []
+
+        console.rule(f"[bold blue]Page {n_page + 1}")
+        for item in items_list:
+            media = Media(name=item[0], url=item[1])
+            # Print things
+            console.print(media.name, media.mal_id)
+
+            media_items.append(media)
+
+        scraper.storage.save_csv(content=media_items, filename="to_scrap.csv")
+
+
+def scrap_items() -> None:
+    pass
+
 
 def main():
-    console = Console()
-    # Initialize storage and scraper
-    url = "https://myanimelist.net/topanime.php"
-    storage = Storage("../../")
-    scraper = MediaScraper(storage=storage, url=url)
-
     # raw_index = scraper.fetch_page(url)
     filename = "index.html"
     raw_index = scraper.storage.read_html(filename=filename)
@@ -51,4 +76,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    scrap_indexs()

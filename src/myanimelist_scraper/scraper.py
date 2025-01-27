@@ -21,15 +21,18 @@ class MediaScraper:
         min_delay: float = 1,
         max_delay: float = 5,
     ) -> None:
-        self.url = url
+        self.base_url = url
         self.storage = storage
         self.session = requests.Session()  # Use same conection
 
         # Set up session headers to be more browser-like
         self.session.headers.update(
             {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
+                AppleWebKit/537.36 (KHTML, like Gecko) \
+                Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,\
+                image/avif,image/webp,*/*;q=0.8",
                 "Accept-Language": "en-US,en;q=0.5",
                 "Accept-Encoding": "gzip, deflate, br",
                 "Connection": "keep-alive",
@@ -43,7 +46,7 @@ class MediaScraper:
         self.min_delay = min_delay
         self.max_delay = max_delay
 
-    # TODO:
+    # TODO: Two issues:
     # 1. Change the `raw` parameter to a enum class
     # 2. Add start/end functionality
     def extract_items_list(self, raw: str) -> list[tuple[str, str]]:
@@ -58,7 +61,6 @@ class MediaScraper:
 
         return media_list
 
-    # TODO: add read pandas DataFrame functionality
     def extract_item_detail(
         self,
         raw: str,

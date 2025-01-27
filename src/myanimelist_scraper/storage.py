@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pandas as pd
+from models import Media
 
 
 class Storage:
@@ -26,31 +27,25 @@ class Storage:
 
         return file_path
 
-    def save_csv(self, content: list[dict], filename: str) -> Path:
+    def save_csv(self, content: list[dict] | list[Media], filename: str) -> Path:
         """Save data extracted from the scrap."""
         file_path = self.scraped_path / filename
 
-        try:
-            df = pd.DataFrame(content)
+        if content and isinstance(content[0], Media):
+            content = [item.to_dict() for item in content]
 
-            mode = "w"
-            header = True
+        existing = pd.DataFrame(content)
+        if file_path.exists():
+            existing = pd.read_csv(file_path)
 
-            if file_path.exists():
-                mode = "a"
-                header = False
+        new_df = pd.DataFrame(content)
 
-            df.to_csv(
-                file_path,
-                index=False,
-                encoding="utf-8",
-                mode=mode,
-                header=header,
-            )
+        combined = pd.concat([existing, new_df]).drop_duplicates(
+            subset=["mal_id"],
+            keep="last",
+        )
 
-        except (ValueError, OSError) as e:
-            msg = f"Failed to save CSV to {file_path}: {e}"
-            raise OSError(msg) from e
+        combined.to_csv(file_path, index=False)
 
         return file_path
 
@@ -61,6 +56,10 @@ class Storage:
             raise FileNotFoundError(file_path)
         with file_path.open("r", encoding="utf-8") as f:
             return f.read()
+
+    # TODO: read_csv must manage the csv files and return Media items with that info.
+    def read_csv(self) -> Media:
+        pass
 
     def save_json(self, content: dict, filename: str) -> Path:
         """Save data as a JSON file."""

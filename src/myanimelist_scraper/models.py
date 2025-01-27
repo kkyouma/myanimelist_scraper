@@ -9,7 +9,7 @@ class Media:
 
     name: str
     url: str
-    last_scraped: datetime
+    last_scraped: datetime | None = None
     scraped: bool = False
 
     @property
@@ -18,10 +18,25 @@ class Media:
         return urljoin(self.url, "stats")
 
     @property
-    def update_last_scraped(self) -> None:
-        """Get the last scraped."""
+    def mal_id(self) -> int:
+        """Extract MAL ID from URL."""
+        parts = self.url.split("/")
+        return round(int(parts[parts.index("anime") + 1]))
+
+    def mark_scraped(self) -> None:
+        """Update when successfully scraped."""
+        self.scraped = True
         self.last_scraped = datetime.now(tz=UTC)
 
+    def to_dict(self) -> dict:
+        """Convert the Media instance to a dictionary."""
+        return {
+            "mal_id": self.mal_id,
+            "name": self.name,
+            "url": self.url,
+            "last_scraped": self.last_scraped,
+            "scraped": self.scraped,
+        }
 
 
 # @dataclass
