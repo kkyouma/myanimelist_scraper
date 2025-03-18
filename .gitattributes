@@ -1,1 +1,2 @@
 data/raw/*.html linguist-detectable=false
+notebooks/*.ipynb linguistic-detectable=false
