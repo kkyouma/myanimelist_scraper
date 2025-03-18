@@ -1,14 +1,20 @@
 # Anime Scraper Project
 
-**Note:**  
-🔧 _This is an early prototype version of the project. Core functionality is implemented, but many basic features are still under development. Use with caution!_
+> [!caution]
+>
+> This project is intended solely for educational and experimental purposes. I do not intend to monetize the scraper or the data obtained from MyAnimeList. All efforts here are purely for learning and research, and this repository is not affiliated with or endorsed by MyAnimeList in any way.
+
+
+
+
 
 A web scraper designed to extract anime information from [MyAnimeList](https://myanimelist.net/). It fetches data from the top anime list and saves details in CSV format for analysis.
 
 ---
 
 ## Features
-
+> [!note]  
+> 🔧 _This is an early prototype version of the project. Core functionality is implemented, but many basic features are still under development. Use with caution!_
 ### Implemented
 
 - **Basic scraping**: Extracts anime details (name, score, rank, etc.).
@@ -33,11 +39,3 @@ A web scraper designed to extract anime information from [MyAnimeList](https://m
   - `beautifulsoup4`
   - `pandas`
   - `rich`
-
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/kkyouma/myanimelist_scraper.git
-   cd myanimelist_scraper
-   ```
